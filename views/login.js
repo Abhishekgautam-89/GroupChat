@@ -17,8 +17,13 @@ login.addEventListener('click',async (e)=>{
     try{
         const loginTo = await axios.post('http://localhost:3000/user/login', object);
         console.log(loginTo);
+        if(loginTo.data.Message === "Login Successful"){
+            document.cookie = `token=${loginTo.data.token}`
+            localStorage.setItem('token', loginTo.data.token);
+            alert(loginTo.data.Message)
+        }
     }
     catch(err){
-        alert()
+        alert(err.response.data.message)
     }
 })

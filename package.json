@@ -5,21 +5,22 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && nodemon ./out/app.js"
+    "start": "tsc && nodemon ./dist/app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mysql2": "^3.3.0",
     "sequelize": "^6.31.1",
     "tedious": "^16.0.0"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/dotenv": "^8.2.0",
@@ -29,3 +30,6 @@
     "nodemon": "^2.0.22"
   }
 }
+
+
+
