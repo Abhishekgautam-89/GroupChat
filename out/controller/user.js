@@ -14,54 +14,68 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const registerUser = (req, res) => {
     const body = req.body;
     // console.log(body);
-    const saltRounds = 10;
+    const salt = 15;
     try {
-        // bcrypt.hash(body.password, salt, async (err, hash) => {
-        //     hashPassword = hash;
-        // })
-        const salt = yield bcrypt_1.default.genSalt(saltRounds);
-        const hash = yield bcrypt_1.default.hash(body.password, salt);
-        const [newUser, created] = yield user_1.default.findOrCreate({
-            where: {
-                Email: body.email,
-                Phone: body.phone
-            },
-            defaults: {
-                Name: body.name,
-                Password: hash
+        bcrypt_1.default.hash(body.password, salt, (err, hash) => __awaiter(void 0, void 0, void 0, function* () {
+            const [newUser, created] = yield user_1.default.findOrCreate({
+                where: {
+                    Email: body.email,
+                    // Phone: body.phone
+                },
+                defaults: {
+                    Name: body.name,
+                    Password: hash,
+                    Phone: body.phone
+                }
+            });
+            if (created) {
+                res.status(201).json({ userStatus: true, message: "New-User Created" });
             }
-        });
-        if (created) {
-            res.status(201).json({ userStatus: true, message: "New-User Created" });
-        }
-        else {
-            // res.status(201).json({ userStatus: true, message: "Email-Id or Phone Number already exists" });
-            throw ("Email-Id or Phone Number already exists");
-        }
+            else {
+                res.status(201).json({ userStatus: false, message: "Email-Id or Phone Number already exists" });
+                // throw ("Email-Id or Phone Number already exists");
+            }
+        }));
     }
     catch (err) {
-        // console.log(err);
+        console.log("register>>", err);
         res.status(401).json({ userStatus: false, message: err });
     }
-});
+};
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
-    console.log(body);
+    // console.log(body)
     try {
         const loginUser = yield user_1.default.findAll({
             where: {
                 Email: body.email
             }
         });
-        const test = yield bcrypt_1.default.compare(body.password, loginUser[0].dataValues.Password);
-        if (test) {
+        if (loginUser.length > 0) {
+            const test = yield bcrypt_1.default.compare(body.password, loginUser[0].dataValues.Password);
+            if (test) {
+                res.status(201).json({ Message: "Login Successful", token: jwtToken(loginUser[0].dataValues.Sr_no, loginUser[0].dataValues.Email) });
+            }
+            else {
+                // throw ('Entered Email-id or Password is incorrect!')
+                res.status(401).json({ message: "User not authorized" });
+            }
+        }
+        else {
+            // throw ("User not found")
+            res.status(404).json({ message: "User not found" });
         }
     }
     catch (err) {
         console.log(err);
+        res.status(500).json({ message: err });
     }
 });
+function jwtToken(id, email) {
+    return jsonwebtoken_1.default.sign({ id, email }, process.env.SECRETkEY);
+}
 exports.default = { registerUser, login };

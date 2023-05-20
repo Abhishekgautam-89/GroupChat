@@ -21,24 +21,25 @@ const registerUser = (req: any, res: any) => {
             const [newUser, created] = await user.findOrCreate({
                 where: {
                     Email: body.email,
-                    Phone: body.phone
+                    // Phone: body.phone
                 },
                 defaults: {
                     Name: body.name,
-                    Password: hash
+                    Password: hash,
+                    Phone: body.phone
                 }
             })
             if (created) {
                 res.status(201).json({ userStatus: true, message: "New-User Created" })
             }
             else {
-                // res.status(201).json({ userStatus: true, message: "Email-Id or Phone Number already exists" });
-                throw ("Email-Id or Phone Number already exists");
+                res.status(201).json({ userStatus: false, message: "Email-Id or Phone Number already exists" });
+                // throw ("Email-Id or Phone Number already exists");
             }
         })
     }
     catch (err) {
-        console.log(err);
+        console.log("register>>",err);
         res.status(401).json({ userStatus: false, message: err })
     }
 }

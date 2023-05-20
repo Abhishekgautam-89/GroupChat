@@ -21,4 +21,4 @@ Sequelize
 // .sync({force: true})
 .sync()
 .then(()=>app.listen(3000))
-.catch((err:any)=>console.log(err));
+.catch((err:any)=>console.log("sequelize>>>",err));

@@ -21,6 +21,7 @@ login.addEventListener('click',async (e)=>{
             document.cookie = `token=${loginTo.data.token}`
             localStorage.setItem('token', loginTo.data.token);
             alert(loginTo.data.Message)
+            window.location.href="./main.html"
         }
     }
     catch(err){

@@ -24,14 +24,19 @@ signup.addEventListener('click', async (e) => {
     try {
         if (password1 === password2) {
             const newUser = await axios.post('http://localhost:3000/user/new', object)
-            if (newUser.data.data.userStatus === true && newUser.data.data.message === "New-User Created") {
+            console.log(newUser.data);
+            if (newUser.data.userStatus === true && newUser.data.message === "New-User Created") {
+                alert(newUser.data.message)
                 window.location.href = './login.html'
+            }
+            else{
+                alert(newUser.data.message)
             }
         }
         else { throw ("Password Mis-match") }
     }
     catch (err) {
-        // console.log(err)
+        console.log(err)
         alert(err.response.data.message)
     }
 })
