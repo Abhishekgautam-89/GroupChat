@@ -3,6 +3,7 @@ import user from "../models/user";
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import Sequelize = require("sequelize");
+import { Op } from "sequelize";
 
 interface requestBody {
     name: string;
@@ -56,7 +57,7 @@ const login = async (req: any, res: any) => {
         if(loginUser.length>0){ 
         const test  = await bcrypt.compare(body.password, loginUser[0].dataValues.Password)
         if(test){
-            res.status(201).json({Message: "Login Successful", token: jwtToken(loginUser[0].dataValues.Sr_no as string, loginUser[0].dataValues.Email as string)})
+            res.status(201).json({Message: "Login Successful", token: jwtToken(loginUser[0].dataValues.Sr_no as string, loginUser[0].dataValues.Email as string, loginUser[0].dataValues.Name as string )})
         }
         else {
             // throw ('Entered Email-id or Password is incorrect!')
@@ -74,9 +75,25 @@ const login = async (req: any, res: any) => {
     }
 
 }
-
-function jwtToken(id : string, email: string){
-return jwt.sign({id, email}, process.env.SECRETkEY as jwt.Secret)
+const getUser = async (req: any, res: any) => {
+    const loginUser = req.user;
+    try {
+        const allUsers = await user.findAll({
+            where: {
+                Sr_no: { [Op.ne]: [loginUser.Sr_no] }
+            }
+        })
+        // user.sync({force:true})
+        res.status(201).json({data: allUsers})
+    }
+    catch (err) {
+        console.log(err)
+        res.status(401).json({data:err})
+    }
 }
-export default { registerUser, login }
+
+function jwtToken(id : string, email: string, name: string){
+return jwt.sign({id, email, name}, process.env.SECRETkEY as jwt.Secret)
+}
+export default { registerUser, login, getUser }
 

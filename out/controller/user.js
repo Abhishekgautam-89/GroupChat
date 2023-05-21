@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const sequelize_1 = require("sequelize");
 const registerUser = (req, res) => {
     const body = req.body;
     // console.log(body);
@@ -58,7 +59,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (loginUser.length > 0) {
             const test = yield bcrypt_1.default.compare(body.password, loginUser[0].dataValues.Password);
             if (test) {
-                res.status(201).json({ Message: "Login Successful", token: jwtToken(loginUser[0].dataValues.Sr_no, loginUser[0].dataValues.Email) });
+                res.status(201).json({ Message: "Login Successful", token: jwtToken(loginUser[0].dataValues.Sr_no, loginUser[0].dataValues.Email, loginUser[0].dataValues.Name) });
             }
             else {
                 // throw ('Entered Email-id or Password is incorrect!')
@@ -75,7 +76,23 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: err });
     }
 });
-function jwtToken(id, email) {
-    return jsonwebtoken_1.default.sign({ id, email }, process.env.SECRETkEY);
+const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const loginUser = req.user;
+    try {
+        const allUsers = yield user_1.default.findAll({
+            where: {
+                Sr_no: { [sequelize_1.Op.ne]: [loginUser.Sr_no] }
+            }
+        });
+        // user.sync({force:true})
+        res.status(201).json({ data: allUsers });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(401).json({ data: err });
+    }
+});
+function jwtToken(id, email, name) {
+    return jsonwebtoken_1.default.sign({ id, email, name }, process.env.SECRETkEY);
 }
-exports.default = { registerUser, login };
+exports.default = { registerUser, login, getUser };
