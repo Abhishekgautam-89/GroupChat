@@ -8,7 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const user_1 = __importDefault(require("../models/user"));
+const messages_1 = __importDefault(require("../models/messages"));
 const addMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const user = req.user;
@@ -23,4 +28,21 @@ const addMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(401).json({ message: err });
     }
 });
-exports.default = { addMessage };
+const getMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const previousMessages = yield messages_1.default.findAll({
+            include: {
+                model: user_1.default,
+                // as: Name,
+                attributes: ['Name', 'Sr_no']
+            }
+        });
+        // console.log(previousMessages);
+        res.status(201).json({ message: previousMessages });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(401).json({ message: err });
+    }
+});
+exports.default = { addMessage, getMessage };

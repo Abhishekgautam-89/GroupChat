@@ -8,5 +8,5 @@ const message_1 = __importDefault(require("../controller/message"));
 const tokenUthenticate_1 = __importDefault(require("../middleware/tokenUthenticate"));
 const router = (0, express_1.Router)();
 router.post('/new', tokenUthenticate_1.default.authenticate, message_1.default.addMessage);
-// router.get('/get', messageController);
+router.get('/get', tokenUthenticate_1.default.authenticate, message_1.default.getMessage);
 exports.default = router;

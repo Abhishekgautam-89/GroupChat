@@ -6,6 +6,6 @@ const router = Router();
 
 
 router.post('/new',authentication.authenticate ,messageController.addMessage ) ;
-// router.get('/get', messageController);
+router.get('/get',authentication.authenticate, messageController.getMessage);
 
 export default router;

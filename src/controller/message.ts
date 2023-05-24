@@ -20,4 +20,22 @@ const addMessage = async (req : any,res: any)=>{
     }
 }
 
-export default{addMessage};
+const getMessage = async(req:any, res: any)=>{
+    try{
+        const previousMessages = await message.findAll({
+            include:{
+                model: user,
+                // as: Name,
+                attributes: ['Name', 'Sr_no']
+            }
+        })
+        // console.log(previousMessages);
+        res.status(201).json({message: previousMessages})
+    }
+    catch (err){
+        console.log(err);
+        res.status(401).json({message: err})
+    }
+}
+
+export default{addMessage, getMessage};
