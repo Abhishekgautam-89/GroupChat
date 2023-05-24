@@ -97,3 +97,8 @@ const loadMessage = async ()=>{
     }   
 }
 
+setInterval(()=>{
+  while (sentInput.hasChildNodes())
+  sentInput.removeChild(sentInput.firstChild)
+  loadMessage()
+},3000)
