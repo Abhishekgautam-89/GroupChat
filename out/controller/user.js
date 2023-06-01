@@ -48,6 +48,7 @@ const registerUser = (req, res) => {
     }
 };
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.url);
     const body = req.body;
     // console.log(body)
     try {

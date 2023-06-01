@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../models/user"));
 const messages_1 = __importDefault(require("../models/messages"));
+const sequelize_1 = require("sequelize");
 const addMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const user = req.user;
@@ -30,11 +31,16 @@ const addMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const getMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // await message.sync({force:true})
+        const msgId = req.query.msgId || 0;
         const previousMessages = yield messages_1.default.findAll({
             include: {
                 model: user_1.default,
                 // as: Name,
                 attributes: ['Name', 'Sr_no']
+            },
+            where: {
+                Sr_no: { [sequelize_1.Op.gt]: msgId }
             }
         });
         // console.log(previousMessages);

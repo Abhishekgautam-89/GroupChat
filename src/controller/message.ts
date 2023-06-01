@@ -1,5 +1,6 @@
 import user from "../models/user";
 import message from '../models/messages';
+import { Op } from "sequelize";
 
 interface body { 
     Message: string
@@ -22,11 +23,17 @@ const addMessage = async (req : any,res: any)=>{
 
 const getMessage = async(req:any, res: any)=>{
     try{
+        // await message.sync({force:true})
+       
+        const msgId = req.query.msgId || 0;
         const previousMessages = await message.findAll({
             include:{
                 model: user,
                 // as: Name,
                 attributes: ['Name', 'Sr_no']
+            },
+            where:{
+                Sr_no:{[Op.gt]: msgId}
             }
         })
         // console.log(previousMessages);

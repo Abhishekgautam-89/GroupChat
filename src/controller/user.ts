@@ -46,6 +46,7 @@ const registerUser = (req: any, res: any) => {
 }
 
 const login = async (req: any, res: any) => {
+    console.log(req.url)
     const body = req.body as requestBody;
     // console.log(body)
     try{
